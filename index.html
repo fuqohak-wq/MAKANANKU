@@ -5,41 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Nutrition Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Konfigurasi Tailwind untuk mendukung Mode Gelap berbasis class
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 font-sans min-h-screen transition-colors duration-200">
 
-    <nav class="bg-slate-800 text-white shadow-md py-4 px-6 mb-8 border-b border-slate-700">
+    <nav class="bg-white dark:bg-slate-800 text-slate-800 dark:text-white shadow-sm dark:shadow-md py-4 px-6 mb-8 border-b border-slate-200 dark:border-slate-700">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wide flex items-center gap-2 text-blue-400">
-                <i class="fa-solid fa-heart-pulse text-amber-400 animate-pulse"></i> AI Nutrition Tracker
+            <h1 class="text-xl font-bold tracking-wide flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                <i class="fa-solid fa-heart-pulse text-amber-500 dark:text-amber-400 animate-pulse"></i> AI Nutrition Tracker
             </h1>
-            <span class="text-xs bg-blue-500/20 px-3 py-1 rounded-full text-blue-300 border border-blue-500/30">v1.3 Premium</span>
+            <div class="flex items-center gap-3">
+                <!-- Tombol Toggle Tema -->
+                <button id="themeToggle" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-semibold flex items-center gap-1.5 transition">
+                    <i id="themeIcon" class="fa-solid fa-moon text-indigo-500"></i>
+                    <span id="themeText">Mode Gelap</span>
+                </button>
+                <span class="text-xs bg-blue-500/10 dark:bg-blue-500/20 px-3 py-1 rounded-full text-blue-600 dark:text-blue-300 border border-blue-500/20 dark:border-blue-500/30">v1.4 Premium</span>
+            </div>
         </div>
     </nav>
 
     <main class="max-w-5xl mx-auto px-4 pb-12">
         
         <script>
-            // Masukkan URL Web App Google Apps Script Anda di bawah ini
             const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxyR-YR6cfWMYrvgZsavVqWCZVDh_FFIdyDDTWWIzM4SxibMkDAdNlOaA2T3pCa1SpA/exec"; 
         </script>
 
-        <section class="bg-slate-800 rounded-2xl shadow-xl border border-slate-700 p-6 mb-8">
-            <h2 class="text-lg font-bold mb-2 flex items-center gap-2 text-slate-200">
-                <i class="fa-solid fa-utensils text-blue-400"></i> Catat Makanan Anda
+        <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-xl border border-slate-200 dark:border-slate-700 p-6 mb-8">
+            <h2 class="text-lg font-bold mb-2 flex items-center gap-2 text-slate-800 dark:text-slate-200">
+                <i class="fa-solid fa-utensils text-blue-500 dark:text-blue-400"></i> Catat Makanan Anda
             </h2>
-            <p class="text-sm text-slate-400 mb-6">Pilih salah satu cara di bawah ini untuk mencatat konsumsi makanan harian Anda.</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Pilih metode input di bawah ini untuk menganalisis kandungan nutrisi makanan Anda.</p>
             
-            <!-- Tab Navigation -->
-            <div class="flex border-b border-slate-700 mb-6 gap-2">
-                <button id="tabText" class="flex-1 py-2.5 text-center border-b-2 border-blue-500 font-semibold text-sm text-blue-400 focus:outline-none transition-all">
+            <!-- Tab Menu -->
+            <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 gap-2">
+                <button id="tabText" class="flex-1 py-2.5 text-center border-b-2 border-blue-500 font-semibold text-sm text-blue-600 dark:text-blue-400 focus:outline-none transition-all">
                     <i class="fa-solid fa-keyboard mr-1.5"></i> Teks Bebas
                 </button>
-                <button id="tabImage" class="flex-1 py-2.5 text-center border-b-2 border-transparent font-semibold text-sm text-slate-400 hover:text-slate-200 focus:outline-none transition-all">
+                <button id="tabImage" class="flex-1 py-2.5 text-center border-b-2 border-transparent font-semibold text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 focus:outline-none transition-all">
                     <i class="fa-solid fa-camera mr-1.5"></i> Foto / Galeri
                 </button>
-                <button id="tabManual" class="flex-1 py-2.5 text-center border-b-2 border-transparent font-semibold text-sm text-slate-400 hover:text-slate-200 focus:outline-none transition-all">
+                <button id="tabManual" class="flex-1 py-2.5 text-center border-b-2 border-transparent font-semibold text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 focus:outline-none transition-all">
                     <i class="fa-solid fa-pen-to-square mr-1.5"></i> Input Manual
                 </button>
             </div>
@@ -51,13 +63,13 @@
                         id="foodInput" 
                         rows="3" 
                         required
-                        class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-200 placeholder-slate-500"
+                        class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500"
                         placeholder="Contoh: Makan siang nasi uduk pake ayam goreng paha dan sambal bajak 2 sendok..."></textarea>
                     
                     <button 
                         type="submit" 
                         id="btnSubmit"
-                        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-900/30">
+                        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 dark:shadow-blue-900/30">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> Analisis dengan AI Gemini
                     </button>
                 </form>
@@ -66,29 +78,29 @@
             <!-- Tab 2: Form Gambar -->
             <div id="wrapperImage" class="space-y-4 hidden">
                 <form id="imageForm" class="space-y-4">
-                    <div class="flex flex-col items-center justify-center border-2 border-dashed border-slate-700 rounded-2xl p-6 bg-slate-950 hover:bg-slate-900/50 cursor-pointer transition relative min-h-[160px]" id="dropzone">
+                    <div class="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-6 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-900/50 cursor-pointer transition relative min-h-[160px]" id="dropzone">
                         <input type="file" id="imageFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                         <div class="text-center space-y-2 pointer-events-none" id="dropzoneContent">
-                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-500"></i>
-                            <p class="text-sm font-semibold text-slate-300">Ambil Foto (Kamera) atau Pilih dari Galeri</p>
-                            <p class="text-xs text-slate-500">Format JPG, PNG, atau WebP</p>
+                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400 dark:text-slate-500"></i>
+                            <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Ambil Foto atau Unggah dari Galeri</p>
+                            <p class="text-xs text-slate-400 dark:text-slate-500">Format Gambar JPG, PNG, atau WebP</p>
                         </div>
-                        <img id="imagePreview" class="hidden max-h-64 object-contain rounded-xl border border-slate-800 z-10">
+                        <img id="imagePreview" class="hidden max-h-64 object-contain rounded-xl border border-slate-200 dark:border-slate-800 z-10">
                     </div>
                     
                     <div class="space-y-2">
-                        <label class="text-xs text-slate-400 font-medium">Informasi Tambahan / Konteks Porsi (Opsional):</label>
+                        <label class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Catatan / Konteks Tambahan (Opsional):</label>
                         <input 
                             type="text" 
                             id="imageContext" 
-                            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-200 placeholder-slate-500 text-sm"
-                            placeholder="Contoh: Piring sedang, minumnya teh manis es hangat...">
+                            class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 text-sm"
+                            placeholder="Contoh: Piring ukuran sedang, es teh manis tambahan...">
                     </div>
 
                     <button 
                         type="submit" 
                         id="btnSubmitImage"
-                        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-900/30">
+                        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 dark:shadow-blue-900/30">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> Analisis Foto dengan AI
                     </button>
                 </form>
@@ -98,12 +110,12 @@
             <div id="wrapperManual" class="space-y-4 hidden">
                 <form id="manualForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="md:col-span-2">
-                        <label class="block text-xs text-slate-400 font-semibold mb-1">NAMA MAKANAN *</label>
-                        <input type="text" id="manualNama" required class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-200 text-sm" placeholder="Contoh: Telur Rebus 2 Butir">
+                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">NAMA MAKANAN *</label>
+                        <input type="text" id="manualNama" required class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="Contoh: Dada Ayam Panggang">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 font-semibold mb-1">KATEGORI</label>
-                        <select id="manualKategori" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-300 text-sm">
+                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">KATEGORI</label>
+                        <select id="manualKategori" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 dark:text-slate-300 text-sm">
                             <option value="Makanan Utama">Makanan Utama</option>
                             <option value="Cemilan">Cemilan</option>
                             <option value="Minuman">Minuman</option>
@@ -111,31 +123,31 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 font-semibold mb-1">PORSI DESKRIPSI</label>
-                        <input type="text" id="manualPorsi" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-200 text-sm" placeholder="Contoh: 2 butir / 1 porsi">
+                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">PORSI</label>
+                        <input type="text" id="manualPorsi" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="Contoh: 1 porsi / 2 potong">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 font-semibold mb-1">BERAT ESTIMASI (GRAM)</label>
-                        <input type="number" id="manualBerat" min="0" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-200 text-sm" placeholder="0">
+                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">BERAT ESTIMASI (GRAM)</label>
+                        <input type="number" id="manualBerat" min="0" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="0">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 font-semibold mb-1">KALORI (KKAL)</label>
-                        <input type="number" id="manualKalori" min="0" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-200 text-sm" placeholder="0">
+                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">KALORI (KKAL)</label>
+                        <input type="number" id="manualKalori" min="0" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="0">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 font-semibold mb-1">PROTEIN (GRAM)</label>
-                        <input type="number" id="manualProtein" min="0" step="0.1" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-200 text-sm" placeholder="0">
+                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">PROTEIN (GRAM)</label>
+                        <input type="number" id="manualProtein" min="0" step="0.1" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="0">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 font-semibold mb-1">KARBOHIDRAT (GRAM)</label>
-                        <input type="number" id="manualKarbo" min="0" step="0.1" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-200 text-sm" placeholder="0">
+                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">KARBOHIDRAT (GRAM)</label>
+                        <input type="number" id="manualKarbo" min="0" step="0.1" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="0">
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block text-xs text-slate-400 font-semibold mb-1">LEMAK TOTAL (GRAM)</label>
-                        <input type="number" id="manualLemak" min="0" step="0.1" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-200 text-sm" placeholder="0">
+                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">LEMAK TOTAL (GRAM)</label>
+                        <input type="number" id="manualLemak" min="0" step="0.1" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="0">
                     </div>
                     <div class="md:col-span-2 pt-2">
-                        <button type="submit" id="btnSubmitManual" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/30">
+                        <button type="submit" id="btnSubmitManual" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 dark:shadow-emerald-900/30">
                             <i class="fa-solid fa-floppy-disk"></i> Simpan Langsung ke Jurnal
                         </button>
                     </div>
@@ -144,33 +156,34 @@
         </section>
 
         <section class="mb-8">
-            <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-200">
-                <i class="fa-solid fa-chart-pie text-blue-400"></i> Ringkasan Nutrisi Hari Ini
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800 dark:text-slate-200">
+                <i class="fa-solid fa-chart-pie text-blue-500 dark:text-blue-400"></i> Ringkasan Nutrisi Hari Ini
             </h2>
             
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" id="dashboardGrid">
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 animate-pulse h-24"></div>
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 animate-pulse h-24"></div>
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 animate-pulse h-24"></div>
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 animate-pulse h-24"></div>
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 animate-pulse h-24"></div>
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 animate-pulse h-24"></div>
+                <!-- Placeholder Loading -->
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 animate-pulse h-24"></div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 animate-pulse h-24"></div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 animate-pulse h-24"></div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 animate-pulse h-24"></div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 animate-pulse h-24"></div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 animate-pulse h-24"></div>
             </div>
         </section>
 
-        <section class="bg-slate-800 rounded-2xl shadow-xl border border-slate-700 overflow-hidden">
-            <div class="p-6 border-b border-slate-700 flex justify-between items-center">
-                <h2 class="text-lg font-bold flex items-center gap-2 text-slate-200">
-                    <i class="fa-solid fa-clock-rotate-left text-blue-400"></i> Riwayat Makan Terakhir
+        <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <h2 class="text-lg font-bold flex items-center gap-2 text-slate-800 dark:text-slate-200">
+                    <i class="fa-solid fa-clock-rotate-left text-blue-500 dark:text-blue-400"></i> Riwayat Makan Terakhir
                 </h2>
-                <button onclick="fetchData()" class="text-blue-400 hover:text-blue-300 text-sm font-medium flex items-center gap-1">
+                <button onclick="fetchData()" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 text-sm font-medium flex items-center gap-1">
                     <i class="fa-solid fa-rotate"></i> Refresh
                 </button>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-850 text-slate-400 text-xs uppercase font-semibold border-b border-slate-700">
+                        <tr class="bg-slate-50 dark:bg-slate-850 text-slate-500 dark:text-slate-400 text-xs uppercase font-semibold border-b border-slate-200 dark:border-slate-700">
                             <th class="py-3 px-6">Waktu</th>
                             <th class="py-3 px-6">Nama Makanan</th>
                             <th class="py-3 px-6">Porsi</th>
@@ -180,9 +193,9 @@
                             <th class="py-3 px-6 text-right">Lemak</th>
                         </tr>
                     </thead>
-                    <tbody id="riwayatTableBody" class="divide-y divide-slate-700 text-sm text-slate-300">
+                    <tbody id="riwayatTableBody" class="divide-y divide-slate-100 dark:divide-slate-700 text-sm text-slate-600 dark:text-slate-300">
                         <tr>
-                            <td colspan="7" class="text-center py-8 text-slate-500">Memuat data dari Google Sheets...</td>
+                            <td colspan="7" class="text-center py-8 text-slate-400">Memuat data dari Google Sheets...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -190,63 +203,63 @@
         </section>
     </main>
 
-    <!-- Pop-up Modal Analisis AI -->
-    <div id="nutritionModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-950 w-full max-w-lg rounded-3xl border border-slate-800 shadow-2xl p-6 text-center overflow-y-auto max-h-[90vh]">
+    <!-- Modal Pop-up Analisis AI -->
+    <div id="nutritionModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-950 w-full max-w-lg rounded-3xl border border-slate-200 dark:border-slate-850 shadow-2xl p-6 text-center overflow-y-auto max-h-[90vh]">
             
-            <div class="text-amber-400 text-3xl mb-2 flex justify-center">
+            <div class="text-amber-500 dark:text-amber-400 text-3xl mb-2 flex justify-center">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
             </div>
             
-            <h3 class="text-xl font-bold text-white mb-1">Hasil Analisis Nutrisi AI</h3>
-            <div id="modalFoodTitle" class="text-amber-400 font-bold uppercase text-sm tracking-wide mb-6">NAMA MAKANAN PROSESING</div>
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-1">Hasil Analisis Nutrisi AI</h3>
+            <div id="modalFoodTitle" class="text-amber-600 dark:text-amber-400 font-bold uppercase text-sm tracking-wide mb-6">NAMA MAKANAN PROSESING</div>
 
             <div class="grid grid-cols-5 gap-2 mb-6">
-                <div class="bg-slate-900/60 p-2 rounded-xl border border-slate-800/80">
-                    <div class="text-[10px] uppercase font-semibold text-slate-500">Berat</div>
-                    <div id="popBerat" class="text-xs font-bold text-slate-300">0g</div>
+                <div class="bg-slate-50 dark:bg-slate-900/60 p-2 rounded-xl border border-slate-200 dark:border-slate-800/80">
+                    <div class="text-[10px] uppercase font-bold text-slate-400">Berat</div>
+                    <div id="popBerat" class="text-xs font-bold text-slate-700 dark:text-slate-300">0g</div>
                 </div>
-                <div class="bg-blue-950/40 p-2 rounded-xl border border-blue-900/30">
-                    <div class="text-[10px] uppercase font-semibold text-blue-400">Kalori</div>
-                    <div id="popKalori" class="text-xs font-bold text-blue-400">0 kcal</div>
+                <div class="bg-blue-50 dark:bg-blue-950/40 p-2 rounded-xl border border-blue-200/50 dark:border-blue-900/30">
+                    <div class="text-[10px] uppercase font-bold text-blue-500 dark:text-blue-400">Kalori</div>
+                    <div id="popKalori" class="text-xs font-bold text-blue-600 dark:text-blue-400">0 kcal</div>
                 </div>
-                <div class="bg-emerald-950/40 p-2 rounded-xl border border-emerald-900/30">
-                    <div class="text-[10px] uppercase font-semibold text-emerald-400">Protein</div>
-                    <div id="popProtein" class="text-xs font-bold text-emerald-400">0g</div>
+                <div class="bg-emerald-50 dark:bg-emerald-950/40 p-2 rounded-xl border border-emerald-200/50 dark:border-emerald-900/30">
+                    <div class="text-[10px] uppercase font-bold text-emerald-500 dark:text-emerald-400">Protein</div>
+                    <div id="popProtein" class="text-xs font-bold text-emerald-600 dark:text-emerald-400">0g</div>
                 </div>
-                <div class="bg-amber-950/40 p-2 rounded-xl border border-amber-900/30">
-                    <div class="text-[10px] uppercase font-semibold text-amber-500">Karbo</div>
-                    <div id="popKarbo" class="text-xs font-bold text-amber-500">0g</div>
+                <div class="bg-amber-50 dark:bg-amber-950/40 p-2 rounded-xl border border-amber-200/50 dark:border-amber-900/30">
+                    <div class="text-[10px] uppercase font-bold text-amber-500">Karbo</div>
+                    <div id="popKarbo" class="text-xs font-bold text-amber-600 dark:text-amber-500">0g</div>
                 </div>
-                <div class="bg-rose-950/40 p-2 rounded-xl border border-rose-900/30">
-                    <div class="text-[10px] uppercase font-semibold text-rose-400">Lemak</div>
-                    <div id="popLemak" class="text-xs font-bold text-rose-400">0g</div>
+                <div class="bg-rose-50 dark:bg-rose-950/40 p-2 rounded-xl border border-rose-200/50 dark:border-rose-900/30">
+                    <div class="text-[10px] uppercase font-bold text-rose-500 dark:text-rose-400">Lemak</div>
+                    <div id="popLemak" class="text-xs font-bold text-rose-600 dark:text-rose-400">0g</div>
                 </div>
             </div>
 
             <div class="text-left mb-6">
-                <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1 mb-2 uppercase tracking-wide">
-                    <i class="fa-solid fa-heart"></i> Kesimpulan Gizi:
+                <h4 class="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 mb-2 uppercase tracking-wide">
+                    <i class="fa-solid fa-heart"></i> Analisis Kelayakan Sehat:
                 </h4>
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-sm text-slate-300 leading-relaxed" id="modalConclusion">
-                    Analisis data kandungan gizi terstruktur...
+                <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-sm text-slate-700 dark:text-slate-300 leading-relaxed" id="modalConclusion">
+                    Menganalisis tingkat kesehatan makanan...
                 </div>
             </div>
 
             <div class="text-left mb-8">
-                <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2 uppercase tracking-wide">
-                    <i class="fa-solid fa-lightbulb"></i> Rekomendasi Porsi & Motivasi Mas:
+                <h4 class="text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1 mb-2 uppercase tracking-wide">
+                    <i class="fa-solid fa-lightbulb"></i> Rekomendasi & Langkah Gaya Hidup Sehat:
                 </h4>
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-sm text-slate-300 italic font-mono" id="modalAdvice">
-                    "Tetap konsisten menjaga pola makannya hari ini!"
+                <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-sm text-slate-700 dark:text-slate-300 italic font-mono" id="modalAdvice">
+                    Memuat tips olahraga penyeimbang, hidrasi, dan perbaikan gaya hidup...
                 </div>
             </div>
 
             <div class="space-y-2">
-                <button id="btnConfirmSave" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-6 rounded-xl transition flex items-center justify-center gap-2 uppercase tracking-wider text-sm shadow-lg shadow-blue-900/20">
+                <button id="btnConfirmSave" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-6 rounded-xl transition flex items-center justify-center gap-2 uppercase tracking-wider text-sm shadow-lg shadow-blue-500/20 dark:shadow-blue-900/20">
                     Simpan ke Jurnal Masuk
                 </button>
-                <button onclick="closeModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-slate-400 font-medium py-3 px-6 rounded-xl transition uppercase tracking-wider text-xs">
+                <button onclick="closeModal()" class="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-850 text-slate-500 dark:text-slate-400 font-semibold py-3 px-6 rounded-xl transition uppercase tracking-wider text-xs border border-slate-200 dark:border-slate-800">
                     Batal
                 </button>
             </div>
@@ -257,9 +270,38 @@
         let temporaryAiData = null; 
         let currentRawInput = "";   
 
+        // Manajemen Pilihan Tema (Default Mode Terang)
+        const htmlEl = document.documentElement;
+        const themeToggleBtn = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
+        const themeText = document.getElementById("themeText");
+
+        const savedTheme = localStorage.getItem("theme") || "light";
+        applyTheme(savedTheme);
+
+        themeToggleBtn.addEventListener("click", () => {
+            const currentTheme = htmlEl.classList.contains("dark") ? "dark" : "light";
+            const newTheme = currentTheme === "dark" ? "light" : "dark";
+            applyTheme(newTheme);
+        });
+
+        function applyTheme(theme) {
+            if (theme === "dark") {
+                htmlEl.classList.add("dark");
+                themeIcon.className = "fa-solid fa-sun text-amber-400";
+                themeText.innerText = "Mode Terang";
+                localStorage.setItem("theme", "dark");
+            } else {
+                htmlEl.classList.remove("dark");
+                themeIcon.className = "fa-solid fa-moon text-indigo-500";
+                themeText.innerText = "Mode Gelap";
+                localStorage.setItem("theme", "light");
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", fetchData);
 
-        // Referensi Elemen UI Tab
+        // Pengendali Tab Input
         const tabText = document.getElementById("tabText");
         const tabImage = document.getElementById("tabImage");
         const tabManual = document.getElementById("tabManual");
@@ -268,7 +310,6 @@
         const wrapperImage = document.getElementById("wrapperImage");
         const wrapperManual = document.getElementById("wrapperManual");
 
-        // Referensi Elemen Form
         const formText = document.getElementById("nutritionForm");
         const formImage = document.getElementById("imageForm");
         const formManual = document.getElementById("manualForm");
@@ -280,18 +321,16 @@
         const imageFileInput = document.getElementById("imageFile");
         const imagePreview = document.getElementById("imagePreview");
         const dropzoneContent = document.getElementById("dropzoneContent");
-        const modal = document.getElementById("nutritionModal");
 
-        // Logika Perpindahan Tab
         function switchTab(activeTab, activeWrapper) {
             [tabText, tabImage, tabManual].forEach(t => {
-                t.classList.remove("border-blue-500", "text-blue-400");
-                t.classList.add("border-transparent", "text-slate-400");
+                t.classList.remove("border-blue-500", "text-blue-600", "dark:text-blue-400");
+                t.classList.add("border-transparent", "text-slate-500", "dark:text-slate-400");
             });
             [wrapperText, wrapperImage, wrapperManual].forEach(w => w.classList.add("hidden"));
 
-            activeTab.classList.remove("border-transparent", "text-slate-400");
-            activeTab.classList.add("border-blue-500", "text-blue-400");
+            activeTab.classList.remove("border-transparent", "text-slate-500", "dark:text-slate-400");
+            activeTab.classList.add("border-blue-500", "text-blue-600", "dark:text-blue-400");
             activeWrapper.classList.remove("hidden");
         }
 
@@ -299,7 +338,7 @@
         tabImage.addEventListener("click", () => switchTab(tabImage, wrapperImage));
         tabManual.addEventListener("click", () => switchTab(tabManual, wrapperManual));
 
-        // Event Listener untuk Memilih File Foto
+        // Handler Upload/Preview Gambar
         imageFileInput.addEventListener("change", function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -313,7 +352,7 @@
             }
         });
 
-        // Fungsi Kompresi Gambar untuk mempercepat transmisi data ke Apps Script
+        // Handler Kompresi Gambar
         function resizeAndConvertImage(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -354,9 +393,9 @@
             });
         }
 
-        // 1. Ambil Data Harian (GET)
+        // Ambil Data Dashboard & Riwayat dari Spreadsheet
         async function fetchData() {
-            if (GAS_WEB_APP_URL === "URL_WEB_APP_GAS_ANDA_DISINI") return;
+            if(GAS_WEB_APP_URL === "URL_WEB_APP_GAS_ANDA_DISINI") return;
             try {
                 const res = await fetch(GAS_WEB_APP_URL);
                 const result = await res.json();
@@ -369,7 +408,7 @@
             }
         }
 
-        // 2. Input Metode 1: Teks Bebas (POST - analyze)
+        // POST - Kirim Teks Bebas
         formText.addEventListener("submit", async (e) => {
             e.preventDefault();
             const textInput = document.getElementById("foodInput").value.trim();
@@ -401,7 +440,7 @@
             }
         });
 
-        // 3. Input Metode 2: Foto Makanan (POST - analyze dengan lampiran media)
+        // POST - Kirim Foto Makanan
         formImage.addEventListener("submit", async (e) => {
             e.preventDefault();
             const file = imageFileInput.files[0];
@@ -438,19 +477,18 @@
                 }
             } catch (error) {
                 alert("Koneksi terputus saat mengunggah foto.");
-                console.error(error);
             } finally {
                 btnSubmitImg.disabled = false;
                 btnSubmitImg.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Analisis Foto dengan AI`;
             }
         });
 
-        // 4. Input Metode 3: Form Manual (POST - save langsung tanpa modal AI)
+        // POST - Simpan Jurnal Manual (Tanpa Modal)
         formManual.addEventListener("submit", async (e) => {
             e.preventDefault();
 
             btnSubmitMan.disabled = true;
-            btnSubmitMan.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> Menyimpan Jurnal...`;
+            btnSubmitMan.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> Menyimpan...`;
 
             const manualData = {
                 nama_makanan: document.getElementById("manualNama").value || "Input Manual",
@@ -475,7 +513,8 @@
                 kafein: 0, alkohol: 0,
                 estimasi_harga: 0,
                 confidence_ai: 100,
-                catatan_ai: "Diinput secara manual oleh pengguna."
+                analisis_kesehatan: "Makanan diinput secara mandiri oleh pengguna secara manual.",
+                catatan_ai: "Lanjutkan pola makan seimbang dan jaga kecukupan air minum harian Anda."
             };
 
             try {
@@ -484,7 +523,7 @@
                     body: JSON.stringify({ 
                         action: "save", 
                         data: manualData,
-                        originalInput: "Metode Input Manual" 
+                        originalInput: "Input Manual User" 
                     }),
                     headers: { 'Content-Type': 'text/plain' }
                 });
@@ -498,20 +537,20 @@
                     alert(`Gagal menyimpan: ${responseData.message}`);
                 }
             } catch (err) {
-                alert("Gagal terhubung untuk menyimpan data manual.");
+                alert("Gagal terhubung saat menyimpan data.");
             } finally {
                 btnSubmitMan.disabled = false;
                 btnSubmitMan.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Langsung ke Jurnal`;
             }
         });
 
-        // Konfirmasi & Eksekusi Simpan Data AI (dari Modal)
+        // Menyimpan Hasil Analisis dari Pop-up Modal ke Sheets
         document.getElementById("btnConfirmSave").addEventListener("click", async () => {
             if(!temporaryAiData) return;
 
             const btnSave = document.getElementById("btnConfirmSave");
             btnSave.disabled = true;
-            btnSave.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> Memasukkan data ke Jurnal...`;
+            btnSave.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> Menyimpan...`;
 
             try {
                 const res = await fetch(GAS_WEB_APP_URL, {
@@ -534,19 +573,19 @@
                     dropzoneContent.classList.remove("hidden");
                     imageFileInput.value = "";
                     fetchData(); 
-                    setTimeout(() => alert("✅ Jurnal makanan berhasil dicatat ke Google Sheets!"), 300);
+                    setTimeout(() => alert("✅ Jurnal makanan dicatat di Google Sheets!"), 300);
                 } else {
                     alert(`Gagal menyimpan: ${responseData.message}`);
                 }
             } catch (e) {
-                alert("Gagal terhubung untuk menyimpan data.");
+                alert("Gagal terhubung saat menyimpan.");
             } finally {
                 btnSave.disabled = false;
                 btnSave.innerHTML = "Simpan ke Jurnal Masuk";
             }
         });
 
-        // Fungsi Membuka & Mengisi Data Pop-up Modal
+        // Buka Modal & Distribusikan Data dari AI
         function openModal(data) {
             document.getElementById("modalFoodTitle").innerText = data.nama_makanan || "Menu Makanan";
             document.getElementById("popBerat").innerText = (data.berat_gram || 0) + "g";
@@ -555,13 +594,12 @@
             document.getElementById("popKarbo").innerText = (data.karbohidrat_g || 0) + "g";
             document.getElementById("popLemak").innerText = (data.lemak_total_g || 0) + "g";
             
-            document.getElementById("modalConclusion").innerHTML = `
-                Makanan ini termasuk ke dalam kategori <b>${data.kategori || 'Umum'}</b> dengan takaran porsi estimasi sekitar <b>${data.porsi || '1 porsi'}</b>.<br>
-                Kandungan makro utama terdiri dari Protein sebanyak ${data.protein_g}g, Karbohidrat ${data.karbohidrat_g}g, serta Lemak Total ${data.lemak_total_g}g. 
-                Serat terdeteksi sebesar ${data.serat || 0}g dan kadar gula terkandung sekitar ${data.gula || 0}g.
-            `;
+            // Evaluasi Tingkat Kelayakan Sehat (Dari respon dinamis AI)
+            document.getElementById("modalConclusion").innerHTML = data.analisis_kesehatan || `Makanan ini termasuk kategori <b>${data.kategori || 'Umum'}</b> dengan porsi sekitar <b>${data.porsi || '1 porsi'}</b>.`;
 
-            document.getElementById("modalAdvice").innerText = data.catatan_ai || "Menu makanan tercatat dengan tingkat akurasi kecerdasan AI yang optimal.";
+            // Langkah Pencegahan / Olahraga Hidup Sehat (Dari respon dinamis AI)
+            document.getElementById("modalAdvice").innerHTML = data.catatan_ai || "Konsisten jalani pola hidup sehat harian Anda.";
+            
             modal.classList.remove("hidden");
         }
 
@@ -577,19 +615,19 @@
                 { title: "Protein", value: db.protein || 0, unit: "g", icon: "fa-egg", color: "text-red-400" },
                 { title: "Karbohidrat", value: db.karbohidrat || 0, unit: "g", icon: "fa-wheat-awn", color: "text-amber-500" },
                 { title: "Lemak", value: db.lemak || 0, unit: "g", icon: "fa-droplet", color: "text-yellow-400" },
-                { title: "Serat", value: db.serat || 0, unit: "g", icon: "fa-seedling", color: "text-green-400" },
-                { title: "Air", value: db.air || 0, unit: "ml", icon: "fa-glass-water", color: "text-blue-400" }
+                { title: "Serat", value: db.serat || 0, unit: "g", icon: "fa-seedling", color: "text-green-500" },
+                { title: "Air", value: db.air || 0, unit: "ml", icon: "fa-glass-water", color: "text-blue-500" }
             ];
 
             grid.innerHTML = metrics.map(m => `
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col justify-between shadow-md">
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col justify-between shadow-sm dark:shadow-md">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">${m.title}</span>
+                        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wide">${m.title}</span>
                         <i class="fa-solid ${m.icon} ${m.color}"></i>
                     </div>
                     <div>
-                        <span class="text-xl font-black text-white">${m.value}</span>
-                        <span class="text-[10px] text-slate-400">${m.unit}</span>
+                        <span class="text-xl font-black text-slate-800 dark:text-white">${m.value}</span>
+                        <span class="text-[10px] text-slate-400 dark:text-slate-400">${m.unit}</span>
                     </div>
                 </div>
             `).join('');
@@ -598,19 +636,19 @@
         function renderRiwayat(riwayatList) {
             const tbody = document.getElementById("riwayatTableBody");
             if (!riwayatList || riwayatList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Belum ada riwayat makan hari ini.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Belum ada riwayat makan hari ini.</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = riwayatList.map(item => `
-                <tr class="hover:bg-slate-750 transition border-b border-slate-700/50">
-                    <td class="py-3 px-6 text-xs text-slate-500">${item["Jam"] || '-'}</td>
-                    <td class="py-3 px-6 font-semibold text-slate-200">${item["Nama Makanan"] || '-'}</td>
-                    <td class="py-3 px-6 text-xs"><span class="bg-slate-900 border border-slate-700 px-2 py-0.5 rounded text-slate-400">${item["Porsi"] || '-'}</span></td>
-                    <td class="py-3 px-6 text-right font-bold text-orange-400">${item["Kalori (kkal)"] || 0}</td>
-                    <td class="py-3 px-6 text-right text-emerald-400 font-medium">${item["Protein (g)"] || 0}g</td>
-                    <td class="py-3 px-6 text-right text-amber-500">${item["Karbohidrat (g)"] || 0}g</td>
-                    <td class="py-3 px-6 text-right text-rose-400">${item["Lemak Total (g)"] || 0}g</td>
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-750 transition border-b border-slate-100 dark:border-slate-700/50">
+                    <td class="py-3 px-6 text-xs text-slate-400 dark:text-slate-500">${item["Jam"] || '-'}</td>
+                    <td class="py-3 px-6 font-semibold text-slate-700 dark:text-slate-200">${item["Nama Makanan"] || '-'}</td>
+                    <td class="py-3 px-6 text-xs"><span class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded text-slate-500 dark:text-slate-400">${item["Porsi"] || '-'}</span></td>
+                    <td class="py-3 px-6 text-right font-bold text-orange-500 dark:text-orange-400">${item["Kalori (kkal)"] || 0}</td>
+                    <td class="py-3 px-6 text-right text-emerald-600 dark:text-emerald-400 font-semibold">${item["Protein (g)"] || 0}g</td>
+                    <td class="py-3 px-6 text-right text-amber-500 font-medium">${item["Karbohidrat (g)"] || 0}g</td>
+                    <td class="py-3 px-6 text-right text-rose-500 dark:text-rose-400">${item["Lemak Total (g)"] || 0}g</td>
                 </tr>
             `).join('');
         }
