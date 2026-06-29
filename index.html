@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Nutrition Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
+
+    <nav class="bg-blue-600 text-white shadow-md py-4 px-6 mb-8">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-wide flex items-center gap-2">
+                <i class="fa-solid fa-heart-pulse text-amber-300"></i> AI Nutrition Tracker
+            </h1>
+            <span class="text-xs bg-blue-700 px-3 py-1 rounded-full text-slate-200 border border-blue-500">v1.0 Live</span>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 pb-12">
+        
+        <script>
+            const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxyR-YR6cfWMYrvgZsavVqWCZVDh_FFIdyDDTWWIzM4SxibMkDAdNlOaA2T3pCa1SpA/exec"; 
+        </script>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+            <h2 class="text-lg font-bold mb-2 flex items-center gap-2 text-slate-700">
+                <i class="fa-solid fa-utensils text-blue-500"></i> Catat Makanan Anda
+            </h2>
+            <p class="text-sm text-slate-500 mb-4">Tuliskan apa saja yang Anda makan/minum dengan bahasa alami AI akan menghitung nutrisinya secara otomatis.</p>
+            
+            <form id="nutritionForm" class="space-y-4">
+                <textarea 
+                    id="foodInput" 
+                    rows="3" 
+                    required
+                    class="w-full px-4 py-3 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 placeholder-slate-400"
+                    placeholder="Contoh: Sarapan dengan 2 butir telur rebus, 1 lembar roti gandum, dan secangkir kopi hitam manis..."></textarea>
+                
+                <button 
+                    type="submit" 
+                    id="btnSubmit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Analisis dengan AI Gemini
+                </button>
+            </form>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-700">
+                <i class="fa-solid fa-chart-pie text-blue-500"></i> Ringkasan Nutrisi Hari Ini
+            </h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" id="dashboardGrid">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm animate-pulse h-24"></div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm animate-pulse h-24"></div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm animate-pulse h-24"></div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm animate-pulse h-24"></div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm animate-pulse h-24"></div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm animate-pulse h-24"></div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                <h2 class="text-lg font-bold flex items-center gap-2 text-slate-700">
+                    <i class="fa-solid fa-clock-rotate-left text-blue-500"></i> Riwayat Makan Terakhir
+                </h2>
+                <button onclick="fetchData()" class="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-rotate"></i> Refresh
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold border-b border-slate-200">
+                            <th class="py-3 px-6">Waktu</th>
+                            <th class="py-3 px-6">Nama Makanan</th>
+                            <th class="py-3 px-6">Porsi</th>
+                            <th class="py-3 px-6 text-right">Kalori</th>
+                            <th class="py-3 px-6 text-right">Protein</th>
+                            <th class="py-3 px-6 text-right">Karbo</th>
+                            <th class="py-3 px-6 text-right">Lemak</th>
+                            <th class="py-3 px-6">Sumber/Catatan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="riwayatTableBody" class="divide-y divide-slate-100 text-sm text-slate-600">
+                        <tr>
+                            <td colspan="8" class="text-center py-8 text-slate-400">Memuat data dari Google Sheets...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", fetchData);
+
+        const form = document.getElementById("nutritionForm");
+        const btnSubmit = document.getElementById("btnSubmit");
+
+        // Fungsi Ambil Data dari API Google Apps Script (GET)
+        async function fetchData() {
+            if(GAS_WEB_APP_URL === "URL_WEB_APP_GAS_ANDA_DISINI") {
+                alert("Mohon ganti variabel GAS_WEB_APP_URL di dalam kode HTML terlebih dahulu!");
+                return;
+            }
+            try {
+                const res = await fetch(GAS_WEB_APP_URL);
+                const result = await res.json();
+                
+                if (result.status === "success") {
+                    renderDashboard(result.dashboard, result.targets);
+                    renderRiwayat(result.riwayat);
+                }
+            } catch (error) {
+                console.error("Gagal mengambil data:", error);
+            }
+        }
+
+        // Fungsi Kirim Makanan ke API GAS (POST)
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const textInput = document.getElementById("foodInput").value.trim();
+            if(!textInput) return;
+
+            // Set UI Loading
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Sedang Menganalisis Makanan...`;
+
+            try {
+                const res = await fetch(GAS_WEB_APP_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ input: textInput }),
+                    headers: { 'Content-Type': 'text/plain' } // CORS Safe pada GAS
+                });
+                
+                const responseData = await res.json();
+                if(responseData.status === "success") {
+                    alert(`✅ Berhasil mencatat: ${responseData.data.nama_makanan} (${responseData.data.kalori_kkal} kkal)`);
+                    document.getElementById("foodInput").value = "";
+                    fetchData(); // Muat Ulang Tampilan
+                } else {
+                    alert(` Gagal menganalisis: ${responseData.message}`);
+                }
+            } catch (error) {
+                alert("Terjadi kesalahan koneksi ke server.");
+                console.error(error);
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Analisis dengan AI Gemini`;
+            }
+        });
+
+        function renderDashboard(db, target) {
+            const grid = document.getElementById("dashboardGrid");
+            
+            const metrics = [
+                { title: "Kalori", value: db.kalori_hari_ini || 0, unit: "kkal", icon: "fa-fire", color: "text-orange-500" },
+                { title: "Protein", value: db.protein || 0, unit: "g", icon: "fa-egg", color: "text-red-500" },
+                { title: "Karbohidrat", value: db.karbohidrat || 0, unit: "g", icon: "fa-wheat-awn", color: "text-amber-600" },
+                { title: "Lemak", value: db.lemak || 0, unit: "g", icon: "fa-droplet", color: "text-yellow-500" },
+                { title: "Serat", value: db.serat || 0, unit: "g", icon: "fa-seedling", color: "text-green-500" },
+                { title: "Air", value: db.air || 0, unit: "ml", icon: "fa-glass-water", color: "text-blue-500" }
+            ];
+
+            grid.innerHTML = metrics.map(m => `
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-semibold text-slate-400 uppercase">${m.title}</span>
+                        <i class="fa-solid ${m.icon} ${m.color}"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold text-slate-800">${m.value}</span>
+                        <span class="text-xs text-slate-400">${m.unit}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderRiwayat(riwayatList) {
+            const tbody = document.getElementById("riwayatTableBody");
+            if (!riwayatList || riwayatList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400">Belum ada riwayat makan hari ini.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = riwayatList.map(item => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="py-3 px-6 whitespace-nowrap text-xs text-slate-400">${item["Jam"] || '-'}</td>
+                    <td class="py-3 px-6 font-medium text-slate-700">${item["Nama Makanan"] || '-'}</td>
+                    <td class="py-3 px-6 text-xs bg-slate-100 rounded-md inline-block my-2 mx-6 text-slate-600">${item["Porsi"] || '-'}</td>
+                    <td class="py-3 px-6 text-right font-semibold text-orange-600">${item["Kalori (kkal)"] || 0}</td>
+                    <td class="py-3 px-6 text-right">${item["Protein (g)"] || 0}g</td>
+                    <td class="py-3 px-6 text-right">${item["Karbohidrat (g)"] || 0}g</td>
+                    <td class="py-3 px-6 text-right">${item["Lemak Total (g)"] || 0}g</td>
+                    <td class="py-3 px-6 text-xs text-slate-400 max-w-xs truncate" title="${item["Catatan AI"]}">${item["Catatan AI"] || '-'}</td>
+                </tr>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
