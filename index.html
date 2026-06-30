@@ -3,655 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Nutrition Tracker</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        // Konfigurasi Tailwind untuk mendukung Mode Gelap berbasis class
-        tailwind.config = {
-            darkMode: 'class',
+    <title>Asisten Motivasi Kocak AI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121214;
+            color: #e1e1e6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        .container {
+            max-width: 650px;
+            width: 100%;
+            background: #1a1a1e;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #29292e;
+        }
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            color: #ff5722;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #a8a8b3;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .status-box {
+            background: #202024;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border-left: 4px solid #ff5722;
+        }
+        .status-item {
+            margin: 5px 0;
+        }
+        .status-label {
+            font-weight: bold;
+            color: #ff9800;
+        }
+        .nasehat-box {
+            background: #29292e;
+            padding: 20px;
+            border-radius: 8px;
+            line-height: 1.6;
+            font-size: 16px;
+            min-height: 150px;
+            white-space: pre-line;
+            border: 1px dashed #444;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+        }
+        button {
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            background-color: #e04d1d;
+        }
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .loading {
+            text-align: center;
+            color: #a8a8b3;
+            font-style: italic;
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 font-sans min-h-screen transition-colors duration-200">
-
-    <nav class="bg-white dark:bg-slate-800 text-slate-800 dark:text-white shadow-sm dark:shadow-md py-4 px-6 mb-8 border-b border-slate-200 dark:border-slate-700">
-        <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wide flex items-center gap-2 text-blue-600 dark:text-blue-400">
-                <i class="fa-solid fa-heart-pulse text-amber-500 dark:text-amber-400 animate-pulse"></i> AI Nutrition Tracker
-            </h1>
-            <div class="flex items-center gap-3">
-                <!-- Tombol Toggle Tema -->
-                <button id="themeToggle" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-semibold flex items-center gap-1.5 transition">
-                    <i id="themeIcon" class="fa-solid fa-moon text-indigo-500"></i>
-                    <span id="themeText">Mode Gelap</span>
-                </button>
-                <span class="text-xs bg-blue-500/10 dark:bg-blue-500/20 px-3 py-1 rounded-full text-blue-600 dark:text-blue-300 border border-blue-500/20 dark:border-blue-500/30">v1.4 Premium</span>
-            </div>
-        </div>
-    </nav>
-
-    <main class="max-w-5xl mx-auto px-4 pb-12">
-        
-        <script>
-            const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxyR-YR6cfWMYrvgZsavVqWCZVDh_FFIdyDDTWWIzM4SxibMkDAdNlOaA2T3pCa1SpA/exec"; 
-        </script>
-
-        <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-xl border border-slate-200 dark:border-slate-700 p-6 mb-8">
-            <h2 class="text-lg font-bold mb-2 flex items-center gap-2 text-slate-800 dark:text-slate-200">
-                <i class="fa-solid fa-utensils text-blue-500 dark:text-blue-400"></i> Catat Makanan Anda
-            </h2>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Pilih metode input di bawah ini untuk menganalisis kandungan nutrisi makanan Anda.</p>
-            
-            <!-- Tab Menu -->
-            <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 gap-2">
-                <button id="tabText" class="flex-1 py-2.5 text-center border-b-2 border-blue-500 font-semibold text-sm text-blue-600 dark:text-blue-400 focus:outline-none transition-all">
-                    <i class="fa-solid fa-keyboard mr-1.5"></i> Teks Bebas
-                </button>
-                <button id="tabImage" class="flex-1 py-2.5 text-center border-b-2 border-transparent font-semibold text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 focus:outline-none transition-all">
-                    <i class="fa-solid fa-camera mr-1.5"></i> Foto / Galeri
-                </button>
-                <button id="tabManual" class="flex-1 py-2.5 text-center border-b-2 border-transparent font-semibold text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 focus:outline-none transition-all">
-                    <i class="fa-solid fa-pen-to-square mr-1.5"></i> Input Manual
-                </button>
-            </div>
-
-            <!-- Tab 1: Form Teks -->
-            <div id="wrapperText" class="space-y-4">
-                <form id="nutritionForm" class="space-y-4">
-                    <textarea 
-                        id="foodInput" 
-                        rows="3" 
-                        required
-                        class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500"
-                        placeholder="Contoh: Makan siang nasi uduk pake ayam goreng paha dan sambal bajak 2 sendok..."></textarea>
-                    
-                    <button 
-                        type="submit" 
-                        id="btnSubmit"
-                        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 dark:shadow-blue-900/30">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Analisis dengan AI Gemini
-                    </button>
-                </form>
-            </div>
-
-            <!-- Tab 2: Form Gambar -->
-            <div id="wrapperImage" class="space-y-4 hidden">
-                <form id="imageForm" class="space-y-4">
-                    <div class="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-6 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-900/50 cursor-pointer transition relative min-h-[160px]" id="dropzone">
-                        <input type="file" id="imageFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                        <div class="text-center space-y-2 pointer-events-none" id="dropzoneContent">
-                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400 dark:text-slate-500"></i>
-                            <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Ambil Foto atau Unggah dari Galeri</p>
-                            <p class="text-xs text-slate-400 dark:text-slate-500">Format Gambar JPG, PNG, atau WebP</p>
-                        </div>
-                        <img id="imagePreview" class="hidden max-h-64 object-contain rounded-xl border border-slate-200 dark:border-slate-800 z-10">
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Catatan / Konteks Tambahan (Opsional):</label>
-                        <input 
-                            type="text" 
-                            id="imageContext" 
-                            class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 text-sm"
-                            placeholder="Contoh: Piring ukuran sedang, es teh manis tambahan...">
-                    </div>
-
-                    <button 
-                        type="submit" 
-                        id="btnSubmitImage"
-                        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 dark:shadow-blue-900/30">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Analisis Foto dengan AI
-                    </button>
-                </form>
-            </div>
-
-            <!-- Tab 3: Form Manual -->
-            <div id="wrapperManual" class="space-y-4 hidden">
-                <form id="manualForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2">
-                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">NAMA MAKANAN *</label>
-                        <input type="text" id="manualNama" required class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="Contoh: Dada Ayam Panggang">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">KATEGORI</label>
-                        <select id="manualKategori" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 dark:text-slate-300 text-sm">
-                            <option value="Makanan Utama">Makanan Utama</option>
-                            <option value="Cemilan">Cemilan</option>
-                            <option value="Minuman">Minuman</option>
-                            <option value="Suplemen">Suplemen</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">PORSI</label>
-                        <input type="text" id="manualPorsi" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="Contoh: 1 porsi / 2 potong">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">BERAT ESTIMASI (GRAM)</label>
-                        <input type="number" id="manualBerat" min="0" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="0">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">KALORI (KKAL)</label>
-                        <input type="number" id="manualKalori" min="0" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="0">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">PROTEIN (GRAM)</label>
-                        <input type="number" id="manualProtein" min="0" step="0.1" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="0">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">KARBOHIDRAT (GRAM)</label>
-                        <input type="number" id="manualKarbo" min="0" step="0.1" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="0">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1">LEMAK TOTAL (GRAM)</label>
-                        <input type="number" id="manualLemak" min="0" step="0.1" class="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200 text-sm" placeholder="0">
-                    </div>
-                    <div class="md:col-span-2 pt-2">
-                        <button type="submit" id="btnSubmitManual" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 dark:shadow-emerald-900/30">
-                            <i class="fa-solid fa-floppy-disk"></i> Simpan Langsung ke Jurnal
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </section>
-
-        <section class="mb-8">
-            <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800 dark:text-slate-200">
-                <i class="fa-solid fa-chart-pie text-blue-500 dark:text-blue-400"></i> Ringkasan Nutrisi Hari Ini
-            </h2>
-            
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" id="dashboardGrid">
-                <!-- Placeholder Loading -->
-                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 animate-pulse h-24"></div>
-                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 animate-pulse h-24"></div>
-                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 animate-pulse h-24"></div>
-                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 animate-pulse h-24"></div>
-                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 animate-pulse h-24"></div>
-                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 animate-pulse h-24"></div>
-            </div>
-        </section>
-
-        <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-            <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                <h2 class="text-lg font-bold flex items-center gap-2 text-slate-800 dark:text-slate-200">
-                    <i class="fa-solid fa-clock-rotate-left text-blue-500 dark:text-blue-400"></i> Riwayat Makan Terakhir
-                </h2>
-                <button onclick="fetchData()" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 text-sm font-medium flex items-center gap-1">
-                    <i class="fa-solid fa-rotate"></i> Refresh
-                </button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-50 dark:bg-slate-850 text-slate-500 dark:text-slate-400 text-xs uppercase font-semibold border-b border-slate-200 dark:border-slate-700">
-                            <th class="py-3 px-6">Waktu</th>
-                            <th class="py-3 px-6">Nama Makanan</th>
-                            <th class="py-3 px-6">Porsi</th>
-                            <th class="py-3 px-6 text-right">Kalori</th>
-                            <th class="py-3 px-6 text-right">Protein</th>
-                            <th class="py-3 px-6 text-right">Karbo</th>
-                            <th class="py-3 px-6 text-right">Lemak</th>
-                        </tr>
-                    </thead>
-                    <tbody id="riwayatTableBody" class="divide-y divide-slate-100 dark:divide-slate-700 text-sm text-slate-600 dark:text-slate-300">
-                        <tr>
-                            <td colspan="7" class="text-center py-8 text-slate-400">Memuat data dari Google Sheets...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
-
-    <!-- Modal Pop-up Analisis AI -->
-    <div id="nutritionModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-950 w-full max-w-lg rounded-3xl border border-slate-200 dark:border-slate-850 shadow-2xl p-6 text-center overflow-y-auto max-h-[90vh]">
-            
-            <div class="text-amber-500 dark:text-amber-400 text-3xl mb-2 flex justify-center">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-            </div>
-            
-            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-1">Hasil Analisis Nutrisi AI</h3>
-            <div id="modalFoodTitle" class="text-amber-600 dark:text-amber-400 font-bold uppercase text-sm tracking-wide mb-6">NAMA MAKANAN PROSESING</div>
-
-            <div class="grid grid-cols-5 gap-2 mb-6">
-                <div class="bg-slate-50 dark:bg-slate-900/60 p-2 rounded-xl border border-slate-200 dark:border-slate-800/80">
-                    <div class="text-[10px] uppercase font-bold text-slate-400">Berat</div>
-                    <div id="popBerat" class="text-xs font-bold text-slate-700 dark:text-slate-300">0g</div>
-                </div>
-                <div class="bg-blue-50 dark:bg-blue-950/40 p-2 rounded-xl border border-blue-200/50 dark:border-blue-900/30">
-                    <div class="text-[10px] uppercase font-bold text-blue-500 dark:text-blue-400">Kalori</div>
-                    <div id="popKalori" class="text-xs font-bold text-blue-600 dark:text-blue-400">0 kcal</div>
-                </div>
-                <div class="bg-emerald-50 dark:bg-emerald-950/40 p-2 rounded-xl border border-emerald-200/50 dark:border-emerald-900/30">
-                    <div class="text-[10px] uppercase font-bold text-emerald-500 dark:text-emerald-400">Protein</div>
-                    <div id="popProtein" class="text-xs font-bold text-emerald-600 dark:text-emerald-400">0g</div>
-                </div>
-                <div class="bg-amber-50 dark:bg-amber-950/40 p-2 rounded-xl border border-amber-200/50 dark:border-amber-900/30">
-                    <div class="text-[10px] uppercase font-bold text-amber-500">Karbo</div>
-                    <div id="popKarbo" class="text-xs font-bold text-amber-600 dark:text-amber-500">0g</div>
-                </div>
-                <div class="bg-rose-50 dark:bg-rose-950/40 p-2 rounded-xl border border-rose-200/50 dark:border-rose-900/30">
-                    <div class="text-[10px] uppercase font-bold text-rose-500 dark:text-rose-400">Lemak</div>
-                    <div id="popLemak" class="text-xs font-bold text-rose-600 dark:text-rose-400">0g</div>
-                </div>
-            </div>
-
-            <div class="text-left mb-6">
-                <h4 class="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 mb-2 uppercase tracking-wide">
-                    <i class="fa-solid fa-heart"></i> Analisis Kelayakan Sehat:
-                </h4>
-                <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-sm text-slate-700 dark:text-slate-300 leading-relaxed" id="modalConclusion">
-                    Menganalisis tingkat kesehatan makanan...
-                </div>
-            </div>
-
-            <div class="text-left mb-8">
-                <h4 class="text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1 mb-2 uppercase tracking-wide">
-                    <i class="fa-solid fa-lightbulb"></i> Rekomendasi & Langkah Gaya Hidup Sehat:
-                </h4>
-                <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-sm text-slate-700 dark:text-slate-300 italic font-mono" id="modalAdvice">
-                    Memuat tips olahraga penyeimbang, hidrasi, dan perbaikan gaya hidup...
-                </div>
-            </div>
-
-            <div class="space-y-2">
-                <button id="btnConfirmSave" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-6 rounded-xl transition flex items-center justify-center gap-2 uppercase tracking-wider text-sm shadow-lg shadow-blue-500/20 dark:shadow-blue-900/20">
-                    Simpan ke Jurnal Masuk
-                </button>
-                <button onclick="closeModal()" class="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-850 text-slate-500 dark:text-slate-400 font-semibold py-3 px-6 rounded-xl transition uppercase tracking-wider text-xs border border-slate-200 dark:border-slate-800">
-                    Batal
-                </button>
-            </div>
-        </div>
+<body>
+<div class="container">
+    <h1>🚀 Bos Motivasi AI Kocak</h1>
+    <div class="subtitle">Sistem Pemantau Rutinitas & Mood Otomatis Berbasis AI</div>
+    <div class="status-box">
+        <div class="status-item"><span class="status-label">🕒 Waktu Sekarang:</span> <span id="jam-sekarang">Memuat...</span></div>
+        <div class="status-item"><span class="status-label">📅 Jadwal Mestinya:</span> <span id="jadwal-mestinya">Memuat...</span></div>
+        <div class="status-item"><span class="status-label">🎭 Status Mood (C10):</span> <span id="mood-c10">Memuat...</span></div>
+        <div class="status-item"><span class="status-label">📝 Catatan Esensial (A11):</span> <span id="mood-a11">Memuat...</span></div>
     </div>
+    <div class="nasehat-box" id="nasehat-container">
+        <div class="loading">Klik tombol di bawah untuk mendengarkan petuah AI yang membagongkan namun penuh makna...</div>
+    </div>
+    <div class="btn-container">
+        <button id="btn-get" onclick="ambilNasehat()">Ambil Nasehat Sekarang!</button>
+    </div>
+</div>
+<script>
+    // 🌟 GANTI URL DI BAWAH INI DENGAN URL WEB APP HASIL DEPLOY GOOGLE APPS SCRIPT ANDA 🌟
+    const WEB_APP_URL = "URL_WEB_APP_GOOGLE_APPS_SCRIPT_ANDA";
 
-    <script>
-        let temporaryAiData = null; 
-        let currentRawInput = "";   
-
-        // Manajemen Pilihan Tema (Default Mode Terang)
-        const htmlEl = document.documentElement;
-        const themeToggleBtn = document.getElementById("themeToggle");
-        const themeIcon = document.getElementById("themeIcon");
-        const themeText = document.getElementById("themeText");
-
-        const savedTheme = localStorage.getItem("theme") || "light";
-        applyTheme(savedTheme);
-
-        themeToggleBtn.addEventListener("click", () => {
-            const currentTheme = htmlEl.classList.contains("dark") ? "dark" : "light";
-            const newTheme = currentTheme === "dark" ? "light" : "dark";
-            applyTheme(newTheme);
-        });
-
-        function applyTheme(theme) {
-            if (theme === "dark") {
-                htmlEl.classList.add("dark");
-                themeIcon.className = "fa-solid fa-sun text-amber-400";
-                themeText.innerText = "Mode Terang";
-                localStorage.setItem("theme", "dark");
+    async function ambilNasehat() {
+        const btn = document.getElementById('btn-get');
+        const container = document.getElementById('nasehat-container');
+        if(WEB_APP_URL === "URL_WEB_APP_GOOGLE_APPS_SCRIPT_ANDA") {
+            container.innerHTML = "<span style='color: #ff4444;'>[Error] Anda belum memasukkan URL Web App hasil deploy Google Apps Script ke variabel <b>WEB_APP_URL</b> di dalam file HTML!</span>";
+            return;
+        }
+        btn.disabled = true;
+        container.innerHTML = "<div class='loading'>Menghubungi batin AI... Tunggu sebentar, AI lagi ngeracik petuah bermakna buat kamu...</div>";
+        try {
+            const response = await fetch(WEB_APP_URL);
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById('jam-sekarang').innerText = data.jamSekarang;
+                document.getElementById('jadwal-mestinya').innerText = data.kegiatanMestinya;
+                document.getElementById('mood-c10').innerText = data.moodC10;
+                document.getElementById('mood-a11').innerText = data.moodA11;
+                container.innerText = data.nasehat;
             } else {
-                htmlEl.classList.remove("dark");
-                themeIcon.className = "fa-solid fa-moon text-indigo-500";
-                themeText.innerText = "Mode Gelap";
-                localStorage.setItem("theme", "light");
+                container.innerHTML = "<span style='color: #ff4444;'>Gagal mengambil data dari Script: " + data.error + "</span>";
             }
+        } catch (error) {
+            container.innerHTML = "<span style='color: #ff4444;'>Terjadi kesalahan jaringan. Pastikan script Anda sudah di-deploy dengan opsi akses 'Anyone'.<br><br>Detail: " + error + "</span>";
+        } finally {
+            btn.disabled = false;
         }
-
-        document.addEventListener("DOMContentLoaded", fetchData);
-
-        // Pengendali Tab Input
-        const tabText = document.getElementById("tabText");
-        const tabImage = document.getElementById("tabImage");
-        const tabManual = document.getElementById("tabManual");
-
-        const wrapperText = document.getElementById("wrapperText");
-        const wrapperImage = document.getElementById("wrapperImage");
-        const wrapperManual = document.getElementById("wrapperManual");
-
-        const formText = document.getElementById("nutritionForm");
-        const formImage = document.getElementById("imageForm");
-        const formManual = document.getElementById("manualForm");
-
-        const btnSubmitText = document.getElementById("btnSubmit");
-        const btnSubmitImg = document.getElementById("btnSubmitImage");
-        const btnSubmitMan = document.getElementById("btnSubmitManual");
-
-        const imageFileInput = document.getElementById("imageFile");
-        const imagePreview = document.getElementById("imagePreview");
-        const dropzoneContent = document.getElementById("dropzoneContent");
-
-        function switchTab(activeTab, activeWrapper) {
-            [tabText, tabImage, tabManual].forEach(t => {
-                t.classList.remove("border-blue-500", "text-blue-600", "dark:text-blue-400");
-                t.classList.add("border-transparent", "text-slate-500", "dark:text-slate-400");
-            });
-            [wrapperText, wrapperImage, wrapperManual].forEach(w => w.classList.add("hidden"));
-
-            activeTab.classList.remove("border-transparent", "text-slate-500", "dark:text-slate-400");
-            activeTab.classList.add("border-blue-500", "text-blue-600", "dark:text-blue-400");
-            activeWrapper.classList.remove("hidden");
-        }
-
-        tabText.addEventListener("click", () => switchTab(tabText, wrapperText));
-        tabImage.addEventListener("click", () => switchTab(tabImage, wrapperImage));
-        tabManual.addEventListener("click", () => switchTab(tabManual, wrapperManual));
-
-        // Handler Upload/Preview Gambar
-        imageFileInput.addEventListener("change", function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    imagePreview.src = event.target.result;
-                    imagePreview.classList.remove("hidden");
-                    dropzoneContent.classList.add("hidden");
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Handler Kompresi Gambar
-        function resizeAndConvertImage(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const img = new Image();
-                    img.onload = function () {
-                        const canvas = document.createElement("canvas");
-                        const MAX_WIDTH = 800;
-                        const MAX_HEIGHT = 800;
-                        let width = img.width;
-                        let height = img.height;
-
-                        if (width > height) {
-                            if (width > MAX_WIDTH) {
-                                height *= MAX_WIDTH / width;
-                                width = MAX_WIDTH;
-                            }
-                        } else {
-                            if (height > MAX_HEIGHT) {
-                                width *= MAX_HEIGHT / height;
-                                height = MAX_HEIGHT;
-                            }
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext("2d");
-                        ctx.drawImage(img, 0, 0, width, height);
-
-                        const dataUrl = canvas.toDataURL("image/jpeg", 0.7); 
-                        const base64 = dataUrl.split(",")[1];
-                        resolve({ base64: base64, mimeType: "image/jpeg" });
-                    };
-                    img.src = e.target.result;
-                };
-                reader.onerror = error => reject(error);
-                reader.readAsDataURL(file);
-            });
-        }
-
-        // Ambil Data Dashboard & Riwayat dari Spreadsheet
-        async function fetchData() {
-            if(GAS_WEB_APP_URL === "URL_WEB_APP_GAS_ANDA_DISINI") return;
-            try {
-                const res = await fetch(GAS_WEB_APP_URL);
-                const result = await res.json();
-                if (result.status === "success") {
-                    renderDashboard(result.dashboard);
-                    renderRiwayat(result.riwayat);
-                }
-            } catch (error) {
-                console.error("Gagal sinkronisasi data sheet:", error);
-            }
-        }
-
-        // POST - Kirim Teks Bebas
-        formText.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const textInput = document.getElementById("foodInput").value.trim();
-            if(!textInput) return;
-
-            currentRawInput = textInput;
-            btnSubmitText.disabled = true;
-            btnSubmitText.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Sedang Menganalisis Makanan...`;
-
-            try {
-                const res = await fetch(GAS_WEB_APP_URL, {
-                    method: "POST",
-                    body: JSON.stringify({ action: "analyze", input: textInput }),
-                    headers: { 'Content-Type': 'text/plain' }
-                });
-                
-                const responseData = await res.json();
-                if(responseData.status === "success") {
-                    temporaryAiData = responseData.data;
-                    openModal(temporaryAiData);
-                } else {
-                    alert(`Gagal menganalisis: ${responseData.message}`);
-                }
-            } catch (error) {
-                alert("Koneksi gagal atau terputus.");
-            } finally {
-                btnSubmitText.disabled = false;
-                btnSubmitText.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Analisis dengan AI Gemini`;
-            }
-        });
-
-        // POST - Kirim Foto Makanan
-        formImage.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const file = imageFileInput.files[0];
-            if (!file) {
-                alert("Silakan unggah atau ambil foto makanan terlebih dahulu.");
-                return;
-            }
-
-            const contextText = document.getElementById("imageContext").value.trim();
-            currentRawInput = contextText || "Foto Makanan";
-
-            btnSubmitImg.disabled = true;
-            btnSubmitImg.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Mengirim & Menganalisis Foto...`;
-
-            try {
-                const compressedImg = await resizeAndConvertImage(file);
-                const res = await fetch(GAS_WEB_APP_URL, {
-                    method: "POST",
-                    body: JSON.stringify({
-                        action: "analyze",
-                        input: contextText,
-                        image: compressedImg.base64,
-                        mimeType: compressedImg.mimeType
-                    }),
-                    headers: { 'Content-Type': 'text/plain' }
-                });
-
-                const responseData = await res.json();
-                if (responseData.status === "success") {
-                    temporaryAiData = responseData.data;
-                    openModal(temporaryAiData);
-                } else {
-                    alert(`Gagal menganalisis foto: ${responseData.message}`);
-                }
-            } catch (error) {
-                alert("Koneksi terputus saat mengunggah foto.");
-            } finally {
-                btnSubmitImg.disabled = false;
-                btnSubmitImg.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Analisis Foto dengan AI`;
-            }
-        });
-
-        // POST - Simpan Jurnal Manual (Tanpa Modal)
-        formManual.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            btnSubmitMan.disabled = true;
-            btnSubmitMan.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> Menyimpan...`;
-
-            const manualData = {
-                nama_makanan: document.getElementById("manualNama").value || "Input Manual",
-                kategori: document.getElementById("manualKategori").value || "Makanan Utama",
-                porsi: document.getElementById("manualPorsi").value || "1 porsi",
-                berat_gram: Number(document.getElementById("manualBerat").value) || 0,
-                kalori_kkal: Number(document.getElementById("manualKalori").value) || 0,
-                protein_g: Number(document.getElementById("manualProtein").value) || 0,
-                karbohidrat_g: Number(document.getElementById("manualKarbo").value) || 0,
-                lemak_total_g: Number(document.getElementById("manualLemak").value) || 0,
-                lemak_jenuh_g: 0,
-                lemak_tak_jenuh_g: 0,
-                omega_3: 0,
-                omega_6: 0,
-                serat: 0,
-                gula: 0,
-                pati: 0,
-                kolesterol: 0,
-                air: 0,
-                vitamin_a: 0, vitamin_b1: 0, vitamin_b2: 0, vitamin_b3: 0, vitamin_b5: 0, vitamin_b6: 0, vitamin_b7: 0, vitamin_b9: 0, vitamin_b12: 0, vitamin_c: 0, vitamin_d: 0, vitamin_e: 0, vitamin_k: 0,
-                kalsium: 0, magnesium: 0, fosfor: 0, kalium: 0, natrium: 0, zat_besi: 0, seng: 0, tembaga: 0, mangan: 0, selenium: 0, iodium: 0,
-                kafein: 0, alkohol: 0,
-                estimasi_harga: 0,
-                confidence_ai: 100,
-                analisis_kesehatan: "Makanan diinput secara mandiri oleh pengguna secara manual.",
-                catatan_ai: "Lanjutkan pola makan seimbang dan jaga kecukupan air minum harian Anda."
-            };
-
-            try {
-                const res = await fetch(GAS_WEB_APP_URL, {
-                    method: "POST",
-                    body: JSON.stringify({ 
-                        action: "save", 
-                        data: manualData,
-                        originalInput: "Input Manual User" 
-                    }),
-                    headers: { 'Content-Type': 'text/plain' }
-                });
-
-                const responseData = await res.json();
-                if (responseData.status === "success") {
-                    formManual.reset();
-                    fetchData();
-                    alert("✅ Jurnal makanan berhasil dicatat!");
-                } else {
-                    alert(`Gagal menyimpan: ${responseData.message}`);
-                }
-            } catch (err) {
-                alert("Gagal terhubung saat menyimpan data.");
-            } finally {
-                btnSubmitMan.disabled = false;
-                btnSubmitMan.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Langsung ke Jurnal`;
-            }
-        });
-
-        // Menyimpan Hasil Analisis dari Pop-up Modal ke Sheets
-        document.getElementById("btnConfirmSave").addEventListener("click", async () => {
-            if(!temporaryAiData) return;
-
-            const btnSave = document.getElementById("btnConfirmSave");
-            btnSave.disabled = true;
-            btnSave.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> Menyimpan...`;
-
-            try {
-                const res = await fetch(GAS_WEB_APP_URL, {
-                    method: "POST",
-                    body: JSON.stringify({ 
-                        action: "save", 
-                        data: temporaryAiData,
-                        originalInput: currentRawInput 
-                    }),
-                    headers: { 'Content-Type': 'text/plain' }
-                });
-
-                const responseData = await res.json();
-                if(responseData.status === "success") {
-                    closeModal();
-                    document.getElementById("foodInput").value = "";
-                    document.getElementById("imageContext").value = "";
-                    imagePreview.classList.add("hidden");
-                    imagePreview.src = "";
-                    dropzoneContent.classList.remove("hidden");
-                    imageFileInput.value = "";
-                    fetchData(); 
-                    setTimeout(() => alert("✅ Jurnal makanan dicatat di Google Sheets!"), 300);
-                } else {
-                    alert(`Gagal menyimpan: ${responseData.message}`);
-                }
-            } catch (e) {
-                alert("Gagal terhubung saat menyimpan.");
-            } finally {
-                btnSave.disabled = false;
-                btnSave.innerHTML = "Simpan ke Jurnal Masuk";
-            }
-        });
-
-        // Buka Modal & Distribusikan Data dari AI
-        function openModal(data) {
-            document.getElementById("modalFoodTitle").innerText = data.nama_makanan || "Menu Makanan";
-            document.getElementById("popBerat").innerText = (data.berat_gram || 0) + "g";
-            document.getElementById("popKalori").innerText = (data.kalori_kkal || 0) + " kcal";
-            document.getElementById("popProtein").innerText = (data.protein_g || 0) + "g";
-            document.getElementById("popKarbo").innerText = (data.karbohidrat_g || 0) + "g";
-            document.getElementById("popLemak").innerText = (data.lemak_total_g || 0) + "g";
-            
-            // Evaluasi Tingkat Kelayakan Sehat (Dari respon dinamis AI)
-            document.getElementById("modalConclusion").innerHTML = data.analisis_kesehatan || `Makanan ini termasuk kategori <b>${data.kategori || 'Umum'}</b> dengan porsi sekitar <b>${data.porsi || '1 porsi'}</b>.`;
-
-            // Langkah Pencegahan / Olahraga Hidup Sehat (Dari respon dinamis AI)
-            document.getElementById("modalAdvice").innerHTML = data.catatan_ai || "Konsisten jalani pola hidup sehat harian Anda.";
-            
-            modal.classList.remove("hidden");
-        }
-
-        function closeModal() {
-            modal.classList.add("hidden");
-            temporaryAiData = null;
-        }
-
-        function renderDashboard(db) {
-            const grid = document.getElementById("dashboardGrid");
-            const metrics = [
-                { title: "Kalori", value: db.kalori_hari_ini || 0, unit: "kkal", icon: "fa-fire", color: "text-orange-500" },
-                { title: "Protein", value: db.protein || 0, unit: "g", icon: "fa-egg", color: "text-red-400" },
-                { title: "Karbohidrat", value: db.karbohidrat || 0, unit: "g", icon: "fa-wheat-awn", color: "text-amber-500" },
-                { title: "Lemak", value: db.lemak || 0, unit: "g", icon: "fa-droplet", color: "text-yellow-400" },
-                { title: "Serat", value: db.serat || 0, unit: "g", icon: "fa-seedling", color: "text-green-500" },
-                { title: "Air", value: db.air || 0, unit: "ml", icon: "fa-glass-water", color: "text-blue-500" }
-            ];
-
-            grid.innerHTML = metrics.map(m => `
-                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col justify-between shadow-sm dark:shadow-md">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wide">${m.title}</span>
-                        <i class="fa-solid ${m.icon} ${m.color}"></i>
-                    </div>
-                    <div>
-                        <span class="text-xl font-black text-slate-800 dark:text-white">${m.value}</span>
-                        <span class="text-[10px] text-slate-400 dark:text-slate-400">${m.unit}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderRiwayat(riwayatList) {
-            const tbody = document.getElementById("riwayatTableBody");
-            if (!riwayatList || riwayatList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Belum ada riwayat makan hari ini.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = riwayatList.map(item => `
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-750 transition border-b border-slate-100 dark:border-slate-700/50">
-                    <td class="py-3 px-6 text-xs text-slate-400 dark:text-slate-500">${item["Jam"] || '-'}</td>
-                    <td class="py-3 px-6 font-semibold text-slate-700 dark:text-slate-200">${item["Nama Makanan"] || '-'}</td>
-                    <td class="py-3 px-6 text-xs"><span class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded text-slate-500 dark:text-slate-400">${item["Porsi"] || '-'}</span></td>
-                    <td class="py-3 px-6 text-right font-bold text-orange-500 dark:text-orange-400">${item["Kalori (kkal)"] || 0}</td>
-                    <td class="py-3 px-6 text-right text-emerald-600 dark:text-emerald-400 font-semibold">${item["Protein (g)"] || 0}g</td>
-                    <td class="py-3 px-6 text-right text-amber-500 font-medium">${item["Karbohidrat (g)"] || 0}g</td>
-                    <td class="py-3 px-6 text-right text-rose-500 dark:text-rose-400">${item["Lemak Total (g)"] || 0}g</td>
-                </tr>
-            `).join('');
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
